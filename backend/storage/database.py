@@ -11,7 +11,7 @@ from sqlalchemy import create_engine, text, Engine
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import declarative_base, Session, sessionmaker
 from backend.models.item_category import ItemCategory
-from backend.storage.pre_populated import USER_ROLES, ITEM_CATEGORIES
+from backend.storage.pre_populated.seed_lists import USER_ROLES, ITEM_CATEGORIES
 
 # models import
 from . import Base

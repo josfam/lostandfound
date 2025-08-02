@@ -3,7 +3,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Body
 from fastapi.responses import JSONResponse
 from backend.storage.database import get_db
-from backend.storage.pre_populated import ITEM_CATEGORIES
+from backend.storage.pre_populated.seed_lists import ITEM_CATEGORIES
 from backend.models.item_category import ItemCategory
 
 categories_router = APIRouter(prefix="/categories", tags=["categories"])

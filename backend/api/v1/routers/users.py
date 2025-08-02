@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 from backend.storage.database import get_db
 from backend.models.user import User
 from backend.api.utils.auth_utils import hash_password, generate_default_password
-from backend.storage.pre_populated import USER_ROLES
+from backend.storage.pre_populated.seed_lists import USER_ROLES
 
 user_router = APIRouter(prefix="/users", tags=["users"])
 
