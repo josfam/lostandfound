@@ -10,10 +10,12 @@ from pydantic_settings import BaseSettings
 from sqlalchemy import create_engine, text, Engine
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import declarative_base, Session, sessionmaker
+from backend.storage.pre_populated import USER_ROLES
 
 # models import
 from . import Base
 from backend.models.user import User
+from backend.models.role import Role
 
 from dotenv import load_dotenv
 
@@ -130,6 +132,23 @@ def get_db() -> Generator[Session, None, None]:
         yield db
     finally:
         db.close()
+
+
+def pre_populate_user_roles():
+    """Pre-populate user roles in the database."""
+    global sessionLocal
+
+    if not sessionLocal:
+        raise Exception("Database not initialized. Call db_init() first.")
+
+    with sessionLocal() as session:
+        for role_name in USER_ROLES:
+            existing_role = session.query(Role).filter_by(name=role_name).first()
+            if not existing_role:
+                new_role = Role(name=role_name)
+                session.add(new_role)
+        session.commit()
+        logger.info("User roles pre-populated successfully.")
 
 
 def close_db():
