@@ -14,3 +14,7 @@ class Role(Base):
             "id": self.id,
             "name": self.name,
         }
+
+    def __repr__(self):
+        """String representation of Role instance."""
+        return f"<Role(id={self.id}, name='{self.name}')>"
