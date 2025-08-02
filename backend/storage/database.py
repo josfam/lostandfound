@@ -1,6 +1,7 @@
 """Database connection and session logic"""
 
 import os
+import csv
 import logging
 from pathlib import Path
 from pydantic import Field
@@ -11,6 +12,7 @@ from sqlalchemy import create_engine, text, Engine
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import declarative_base, Session, sessionmaker
 from backend.models.item_category import ItemCategory
+from backend.models.drop_off_locations import DropOffLocation
 from backend.storage.pre_populated.seed_lists import USER_ROLES, ITEM_CATEGORIES
 
 # models import
@@ -172,10 +174,40 @@ def pre_populate_item_categories():
         logger.info("Categories pre-populated successfully.")
 
 
+def pre_populate_drop_off_locations():
+    """Pre-populate drop-off locations in the database."""
+    global sessionLocal
+
+    if not sessionLocal:
+        raise Exception("Database not initialized. Call db_init() first.")
+
+    drop_off_file = Path(__file__).parent / "pre_populated" / "dropofflocations.csv"
+    with open(drop_off_file, mode="r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        with sessionLocal() as session:
+            for row in reader:
+                name: str = row.get("name", "").strip()
+                description: str = row.get("description", "").strip()
+
+                if not name:
+                    logger.warning("Skipping drop-off location with empty name.")
+                    continue
+
+                existing_location = (
+                    session.query(DropOffLocation).filter_by(name=name).first()
+                )
+                if not existing_location:
+                    new_location = DropOffLocation(name=name, description=description)
+                    session.add(new_location)
+            session.commit()
+            logger.info("Drop-off locations pre-populated successfully.")
+
+
 def pre_populate_tables():
     """Pre-populate tables in the database."""
     pre_populate_user_roles()
     pre_populate_item_categories()
+    pre_populate_drop_off_locations()
     logger.info("Pre-population of tables completed successfully.")
 
 
