@@ -6,7 +6,7 @@ from fastapi.middleware import cors
 from contextlib import asynccontextmanager
 from backend.storage.database import db_init, close_db, pre_populate_tables
 # import routers
-from backend.api.v1.routers import users
+from backend.api.v1.routers import users, categories
 
 app_router = APIRouter(prefix="/api/v1", tags=["v1"])
 
@@ -20,6 +20,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 app_router.include_router(users.user_router)
+app_router.include_router(categories.categories_router)
 app.include_router(app_router)
 
 app.add_middleware(
