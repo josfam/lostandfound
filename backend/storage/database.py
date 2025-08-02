@@ -10,7 +10,8 @@ from pydantic_settings import BaseSettings
 from sqlalchemy import create_engine, text, Engine
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import declarative_base, Session, sessionmaker
-from backend.storage.pre_populated import USER_ROLES
+from backend.models.item_category import ItemCategory
+from backend.storage.pre_populated import USER_ROLES, ITEM_CATEGORIES
 
 # models import
 from . import Base
@@ -149,6 +150,33 @@ def pre_populate_user_roles():
                 session.add(new_role)
         session.commit()
         logger.info("User roles pre-populated successfully.")
+
+
+def pre_populate_item_categories():
+    """Pre-populate categories in the database."""
+    global sessionLocal
+
+    if not sessionLocal:
+        raise Exception("Database not initialized. Call db_init() first.")
+
+    with sessionLocal() as session:
+        # Example categories, replace with actual categories as needed
+        for category_name in ITEM_CATEGORIES:
+            existing_category = (
+                session.query(ItemCategory).filter_by(name=category_name).first()
+            )
+            if not existing_category:
+                new_category = ItemCategory(name=category_name)
+                session.add(new_category)
+        session.commit()
+        logger.info("Categories pre-populated successfully.")
+
+
+def pre_populate_tables():
+    """Pre-populate tables in the database."""
+    pre_populate_user_roles()
+    pre_populate_item_categories()
+    logger.info("Pre-population of tables completed successfully.")
 
 
 def close_db():
