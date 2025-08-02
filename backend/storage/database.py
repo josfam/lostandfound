@@ -19,6 +19,7 @@ from backend.storage.pre_populated.seed_lists import USER_ROLES, ITEM_CATEGORIES
 from . import Base
 from backend.models.user import User
 from backend.models.role import Role
+from backend.models.room import Room
 
 from dotenv import load_dotenv
 
@@ -203,11 +204,37 @@ def pre_populate_drop_off_locations():
             logger.info("Drop-off locations pre-populated successfully.")
 
 
+def pre_populate_rooms():
+    """Pre-populate rooms in the database."""
+    global sessionLocal
+
+    if not sessionLocal:
+        raise Exception("Database not initialized. Call db_init() first.")
+
+    rooms_file = Path(__file__).parent / "pre_populated" / "rooms.csv"
+    with open(rooms_file, mode="r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        with sessionLocal() as session:
+            for row in reader:
+                room_code: str = row.get("room code", "").strip()
+                if not room_code:
+                    logger.warning("Skipping room with empty code.")
+                    continue
+
+                existing_room = session.query(Room).filter_by(code=room_code).first()
+                if not existing_room:
+                    new_room = Room(code=room_code)
+                    session.add(new_room)
+            session.commit()
+            logger.info("Rooms pre-populated successfully.")
+
+
 def pre_populate_tables():
     """Pre-populate tables in the database."""
     pre_populate_user_roles()
     pre_populate_item_categories()
     pre_populate_drop_off_locations()
+    pre_populate_rooms()
     logger.info("Pre-population of tables completed successfully.")
 
 
