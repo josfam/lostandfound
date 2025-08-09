@@ -11,8 +11,6 @@ from pydantic_settings import BaseSettings
 from sqlalchemy import create_engine, text, Engine
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import declarative_base, Session, sessionmaker
-from backend.models.item_category import ItemCategory
-from backend.models.drop_off_locations import DropOffLocation
 from backend.storage.pre_populated.seed_lists import USER_ROLES, ITEM_CATEGORIES
 
 # models import
@@ -20,6 +18,9 @@ from . import Base
 from backend.models.user import User
 from backend.models.role import Role
 from backend.models.room import Room
+from backend.models.drop_off_locations import DropOffLocation
+from backend.models.item_category import ItemCategory
+from backend.models.lost_item import LostItem
 
 from dotenv import load_dotenv
 
