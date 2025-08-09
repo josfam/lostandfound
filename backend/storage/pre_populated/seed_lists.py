@@ -3,6 +3,7 @@
 USER_ROLES = ["student", "location personnel"]
 
 ITEM_CATEGORIES = [
+    "other",  # anything that doesn’t a specific category
     "electronics",
     "earphones",
     "wallets",
@@ -21,5 +22,4 @@ ITEM_CATEGORIES = [
     "personal care",
     "footwear",
     "umbrellas",
-    "other",  # anything that doesn’t fit above
 ]
